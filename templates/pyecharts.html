@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Pyecharts</title>
+    <link rel="icon" href="{{url_for('static',filename='favicon.ico')}}" type="image/x-icon" />
+    <script src="{{url_for('static', filename='echarts.js')}}"></script>
+    <script src="{{url_for('static', filename='echarts-gl.js')}}"></script>
+    <script src="{{url_for('static', filename='china.js')}}"></script>
+    <script src="{{url_for('static', filename='world.js')}}"></script>
+    <script src="{{url_for('static', filename='zhejiang.js')}}"></script>
+</head>
+
+<body>
+  {{myechart|safe}}
+</body>
+
+</html>

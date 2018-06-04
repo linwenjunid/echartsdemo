@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>地图</title>
+<link rel="icon" href="{{url_for('static',filename='favicon.ico')}}" type="image/x-icon" />
+<script src="{{url_for('static', filename='echarts.js')}}"></script>
+<script src="{{url_for('static', filename='macarons.js')}}"></script>
+<script src="{{url_for('static', filename='jquery-3.3.1.min.js')}}"></script>
+<style type="text/css">
+.blue
+{
+	color:blue;
+}
+html,body{height:100%} 
+</style>
+</head>
+<body>
+<div id="main" style="width:100%;height:100%;" ondblclick="javascript:godown('浙江省')"></div>
+<script>
+var mapconfig = {
+    "浙江省":"zhejiang.json",
+	"杭州市":"/330100.json",
+	"宁波市":"/330200.json",
+	"温州市":"/330300.json",
+	"嘉兴市":"/330400.json",
+	"湖州市":"/330500.json",
+	"绍兴市":"/330600.json",
+	"金华市":"/330700.json",
+	"衢州市":"/330800.json",
+	"舟山市":"/330900.json",
+	"台州市":"/331000.json",
+	"丽水市":"/331100.json"
+};
+
+var myChart = echarts.init(document.getElementById('main'),'macarons');
+myChart.showLoading();
+showmap();
+myChart.on('click', function (param) {
+	godown(param.name);
+});
+
+var mydata1=[];
+var mydata2=[];
+//获取数据
+getdata();
+function getdata(){
+	
+	$.ajaxSettings.async = false;
+	$.get("/datamap",function(d){
+        var obj = JSON.parse(d);
+        //alert(obj.val1);
+		mydata1=obj.val1;
+        mydata2=obj.val2;
+	});
+	$.ajaxSettings.async = true;
+    
+}
+
+//渲染全图
+function showmap(){
+    $.get("/zhejiang.json",function(d){
+		echarts.registerMap('浙江', d);
+		myChart.hideLoading();
+		myChart.setOption({	
+			backgroundColor: '#404a59',
+			title:{  				
+				text: '浙江省',  			
+				left:'20px',			
+				top:'10px',						
+				link: "javascript:godown('浙江省')",			
+				target: "self",			
+				textStyle : {			
+					color: '#fff',		
+					fontSize : 20,		
+					fontWeight: 900		
+				}			
+			},				
+			tooltip: {  				
+				trigger: 'item',  			
+				formatter: '{b}:{c} (亿)'			
+			},				
+			toolbox: {				
+				show: true,			
+				right: '20px',			
+				top:'10px',			
+				iconStyle:{			
+					borderColor:'#fff'		
+				},			
+				feature: {			
+					dataView: {show: true, readOnly: false},		
+					restore: {show: true},		
+					saveAsImage: {show: true}		
+				},			
+				emphasis:{			
+					iconStyle:{		
+						borderColor:'#fff'	
+					}		
+				}			
+			},				
+			visualMap: {  				
+					min: 0,  		
+					max: 100, 		
+					left: '20px',		
+					bottom: '10px',		
+					text:['高','低'],  		
+					realtime: false,  		
+					calculable: true, 		
+					textStyle : {		
+						color: '#fff'	
+					},		
+					inRange: {  		
+						color: ['#e0ffff', '#006edd']  	
+					}  		
+			},				
+			series: [{				
+				type: 'map',			
+				map: '浙江',
+                layoutCenter: ['30%', '50%'],
+                layoutSize: '90%',
+				label: {			
+					show: true,		
+					textStyle : {		
+						color: '#fff',	
+						fontSize : 15	
+					},		
+					emphasis:{		
+						textStyle : {	
+							color: '#000000',
+							fontSize : 15,
+							fontWeight: 700
+						}	
+					}		
+				},			
+				itemStyle:{  			
+					normal:{  		
+						borderColor: '#fff'	,
+						borderWidth: 2
+					},  		
+					emphasis:{		
+						areaColor: '#cce7df',	
+					}  		
+				},
+				data: mydata1
+			},
+            {
+                name: '数据',
+                type: 'pie',
+                radius : ['10%','50%'],
+                center: ['75%', '50%'],
+                data:mydata2,
+                itemStyle: {
+                    emphasis: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            }
+            ]
+		});
+	});
+}
+
+//下撰渲染地图
+function godown(name){
+	$.get(mapconfig[name],function(d){
+		echarts.registerMap(name, d);
+		myChart.hideLoading();
+		myChart.setOption({
+			series: [{
+				type: 'map',
+				map: name
+			}]
+		});
+	});
+}
+</script>
+</body>
+</html>

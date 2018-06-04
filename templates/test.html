@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Pyecharts Flask</title>
+    <link rel="icon" href="{{url_for('static',filename='favicon.ico')}}" type="image/x-icon" />
+    {% for jsfile_name in script_list %}
+        <script src="{{ host }}/{{ jsfile_name }}.js"></script>
+    {% endfor %}
+</head>
+
+<body>
+  {{ myechart|safe }}
+</body>
+
+</html>

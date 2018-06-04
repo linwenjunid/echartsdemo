@@ -1,0 +1,8 @@
+mysqlInfo = {
+    "host": '192.168.134.201',
+    "user": 'root',
+    "passwd": 'hadoop',
+    "db": 'python',
+    "port": 3306,
+    "charset": 'utf8'
+}
